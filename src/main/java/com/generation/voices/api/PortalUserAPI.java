@@ -4,19 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.generation.voices.dto.PortalUserDTO;
 import com.generation.voices.service.PortalUserService;
-
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
-
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
 @RestController
-@RequestMapping("/api/voices/users")
+@RequestMapping("/voices/api/users")
 public class PortalUserAPI {
 
     @Autowired

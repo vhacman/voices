@@ -1,0 +1,45 @@
+PUNTO SESSIONE 1 - SVILUPPO BACKEND
+Data: 06/03/2026
+Aggiornato alle: 14:40
+============================================================
+
+1. SETUP INIZIALE
+   - Fork della repository del gruppo su GitHub
+   - Importate le modifiche del vecchio progetto cominciato il 05/03/2026
+     (modello PortalUser, Blog, BlogPost, enum, security, application.properties)
+
+2. MODIFICHE SUCCESSIVE (06/03/2026)
+
+   BUGFIX - BlogPost.java
+   - Aggiunto @ManyToOne + @JoinColumn(name = "blog_id") sul campo blog
+   - Aggiunto @Enumerated(EnumType.STRING) sul campo status
+   - Aggiunto @Column(columnDefinition = "TEXT") sul campo content
+   - Aggiunte validazioni @NotEmpty su title e content
+
+   REFACTOR - Struttura package enum
+   - Spostati i file enum in model/enumerations/
+     (Role, BlogType, BlogPostStatus, Palette)
+   - Corretti i package declaration nei nuovi file
+   - Aggiornati tutti gli import in: PortalUser, Blog, BlogPost,
+     PortalUserDTO, BlogPostDTO, BlogDTO
+
+   NUOVI FILE CREATI
+   - BlogPostRepository.java  → repository per BlogPost
+   - BlogPostDTO.java         → DTO per BlogPost
+   - BlogDTO.java             → DTO per Blog
+   - BlogMapper.java          → mapper MapStruct Blog <-> BlogDTO
+   - BlogPostMapper.java      → mapper MapStruct BlogPost <-> BlogPostDTO
+
+============================================================
+MESSAGGIO DI COMMIT
+   fix: corretto BlogPost entity, refactor package enum in model/enumerations,
+   aggiunti BlogPostRepository, BlogDTO, BlogPostDTO, BlogMapper, BlogPostMapper
+
+============================================================
+TODO PROSSIMA SESSIONE
+   - BlogService (aggiornare con DTO e mapper)
+   - BlogPostService
+   - BlogAPI (controller REST CRUD)
+   - BlogPostAPI (controller REST CRUD)
+   - Completare PortalUserAPI (GET all, GET by id, PUT, DELETE)
+============================================================

@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./mvnw compile)",
+      "Bash(./mvnw clean compile)",
+      "Bash(date /t)",
+      "Bash(time /t)"
+    ]
+  }
+}

@@ -2,7 +2,7 @@ package com.generation.voices.dto;
 
 import java.time.LocalDate;
 
-import com.generation.voices.model.Role;
+import com.generation.voices.model.enumerations.Role;
 
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotEmpty;

@@ -12,6 +12,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import com.generation.voices.model.enumerations.BlogType;
+import com.generation.voices.model.enumerations.Palette;
 import lombok.Data;
 
 // scadenza 6 marzo ore 13

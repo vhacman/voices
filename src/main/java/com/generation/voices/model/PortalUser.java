@@ -1,14 +1,16 @@
 package com.generation.voices.model;
 
 import java.time.LocalDate;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import com.generation.voices.model.enumerations.Role;
 import lombok.Data;
 
 @Entity
@@ -39,6 +41,7 @@ public class PortalUser {
     @NotEmpty(message="Password is required")
     private String password;
 
+    @Enumerated(EnumType.STRING)
     @NotNull(message="Role is required")
     private Role role;
        

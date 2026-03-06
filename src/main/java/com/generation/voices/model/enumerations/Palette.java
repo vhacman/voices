@@ -1,4 +1,4 @@
-package com.generation.voices.model;
+package com.generation.voices.model.enumerations;
 
 import lombok.Getter;
 
