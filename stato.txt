@@ -1,0 +1,128 @@
+========================================================================
+  PROGETTO VOICES — STATO DI IMPLEMENTAZIONE
+  Data: 09/03/2026
+========================================================================
+
+------------------------------------------------------------------------
+  1. BLOG API  —  Base URL: /voices/api/blogs
+------------------------------------------------------------------------
+
+  [OK] GET    /voices/api/blogs           Lista completa dei blog (200)
+  [OK] GET    /voices/api/blogs/{id}      Ricerca per ID (200 / 404)
+  [OK] POST   /voices/api/blogs           Inserimento nuovo blog (201 / 400)
+  [OK] PUT    /voices/api/blogs/{id}      Aggiornamento blog (200 / 400 / 404)
+  [OK] DELETE /voices/api/blogs/{id}      Eliminazione blog (204)
+
+  Note tecniche:
+  - Validazione @Valid su tutti i body in ingresso
+  - EntityNotFoundException gestita con 404
+  - Logica di business delegata a BlogService
+
+------------------------------------------------------------------------
+  2. BLOG POST API  —  Base URL: /voices/api/posts
+------------------------------------------------------------------------
+
+  [OK] GET    /voices/api/posts                  Lista completa dei post (200)
+  [OK] GET    /voices/api/posts/{id}             Ricerca per ID (200 / 404)
+  [OK] GET    /voices/api/posts/blog/{blogId}    Post filtrati per blog (200)
+  [OK] POST   /voices/api/posts                  Inserimento nuovo post (201 / 400)
+  [OK] PUT    /voices/api/posts/{id}             Aggiornamento post (200 / 400 / 404)
+  [OK] DELETE /voices/api/posts/{id}             Eliminazione post (204)
+
+  Note tecniche:
+  - Endpoint /blog/{blogId} ottimizzato per dashboard specifiche di ogni blog
+  - findByBlogId implementato in BlogPostRepository (Spring Data JPA naming)
+  - Validazione @Valid su insert e update
+
+------------------------------------------------------------------------
+  3. PORTAL USER API  —  Base URL: /voices/api/users
+------------------------------------------------------------------------
+
+  [OK] GET    /voices/api/users           Lista completa utenti (200)
+  [OK] GET    /voices/api/users/{id}      Ricerca per ID (200 / 404)
+  [OK] POST   /voices/api/users           Registrazione nuovo utente (201 / 400)
+  [OK] PUT    /voices/api/users/{id}      Aggiornamento utente (200 / 400 / 404)
+  [OK] DELETE /voices/api/users/{id}      Eliminazione utente (204)
+  [OK] POST   /voices/api/users/login     Login e generazione JWT (200 / 401)
+
+  Note tecniche:
+  - Password hashata con MD5 prima del salvataggio
+  - Login restituisce { "token": "eyJ..." }
+  - Endpoint login pubblico (non richiede JWT)
+
+------------------------------------------------------------------------
+  4. SECURITY  —  Spring Security + JWT
+------------------------------------------------------------------------
+
+  [OK] Dipendenza spring-boot-starter-security aggiunta al pom.xml
+  [OK] JWT secret configurato in application.properties
+  [OK] JwtService          — generazione e validazione token
+  [OK] JwtAuthFilter       — lettura header Authorization su ogni request
+  [OK] CustomUserDetails   — caricamento utente dal DB per Spring Security
+  [OK] SecurityConfig      — regole HTTP, CORS, ruoli, sessioni STATELESS
+  [OK] PortalUserRepository — findByUsername aggiunto
+  [OK] Password: MD5 (via PasswordHasher)
+
+  Regole di accesso attive:
+  - POST /voices/api/users/login  → PUBBLICO (nessun token richiesto)
+  - POST /voices/api/users        → PUBBLICO (registrazione)
+  - /voices/api/users/**          → solo ADMIN
+  - tutto il resto                → AUTENTICATO (JWT valido obbligatorio)
+
+------------------------------------------------------------------------
+  5. PROBLEMI RISOLTI
+------------------------------------------------------------------------
+
+  [OK] POST /voices/api/users (registrazione) ora è pubblica
+       → .requestMatchers(HttpMethod.POST, "/voices/api/users").permitAll()
+       → Un nuovo utente può registrarsi senza dover essere già loggato
+
+  [OK] Controllo sui ruoli implementato in SecurityConfig
+       → POST /voices/api/users/login  → PUBBLICO
+       → POST /voices/api/users        → PUBBLICO (registrazione)
+       → /voices/api/users/**          → solo ADMIN (lista, modifica, elimina utenti)
+       → tutto il resto                → qualsiasi utente autenticato (BLOGGER o ADMIN)
+
+  [OK] CORS configurato per Angular (localhost:4200)
+       → CorsConfigurationSource registrato in SecurityConfig
+       → Metodi permessi: GET, POST, PUT, DELETE, OPTIONS
+       → Header permessi: Authorization, Content-Type
+       → Preflight OPTIONS cachato per 1 ora (maxAge 3600s)
+       → In produzione: sostituire "http://localhost:4200" con il dominio reale
+
+------------------------------------------------------------------------
+  6. STACK TECNICO
+------------------------------------------------------------------------
+
+  Backend  : Spring Boot 3.2.5 — Java 21
+  Database : MySQL  (spring.jpa.hibernate.ddl-auto=update)
+  ORM      : Spring Data JPA + Hibernate
+  Mapping  : MapStruct 1.6.3
+  Security : Spring Security + JJWT 0.11.5 (HS256)
+  Hashing  : MD5 (via PasswordHasher)
+  Client   : Angular (integrazione futura)
+
+========================================================================
+  COMMIT
+========================================================================
+
+feat(security): add Spring Security + JWT authentication layer
+
+- Add spring-boot-starter-security dependency (pom.xml)
+- Add jwt.secret to application.properties
+- Implement JwtService: token generation and full validation
+  (exp, nbf, iat, max age 24h)
+- Implement JwtAuthenticationFilter: reads Authorization header,
+  validates JWT, populates SecurityContext on every request
+- Implement CustomUserDetailsService: loads user from DB by username
+- Implement SecurityConfig:
+    * CSRF disabled (stateless JWT API)
+    * CORS configured for Angular (localhost:4200)
+    * Public routes: POST /login, POST /users (registration)
+    * ADMIN-only routes: /voices/api/users/**
+    * All other routes: any authenticated user
+    * STATELESS session policy
+- Add LoginRequest DTO and POST /voices/api/users/login endpoint
+- Add PortalUserRepository.findByUsername()
+- Password hashing: MD5 via PasswordHasher (save, update, login)
+- Add stato.txt: full implementation status document

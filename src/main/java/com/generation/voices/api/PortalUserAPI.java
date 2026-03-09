@@ -1,11 +1,13 @@
 package com.generation.voices.api;
 
+import com.generation.voices.dto.LoginRequest;
 import com.generation.voices.dto.PortalUserDTO;
 import com.generation.voices.service.PortalUserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -62,6 +64,21 @@ public class PortalUserAPI {
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         service.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    /*
+     * Endpoint di login: pubblico (non richiede JWT).
+     * Accetta { "username": "...", "password": "..." }
+     * Restituisce { "token": "eyJ..." } in caso di successo,
+     * oppure 401 se le credenziali sono errate.
+     */
+    @PostMapping("/login")
+    public ResponseEntity<Map<String, String>> login(@Valid @RequestBody LoginRequest request) {
+        try {
+            return ResponseEntity.ok(service.login(request.getUsername(), request.getPassword()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(401).build();
+        }
     }
 
 }
