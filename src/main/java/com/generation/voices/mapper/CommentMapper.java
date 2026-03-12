@@ -6,31 +6,25 @@ import org.mapstruct.Mapping;
 import com.generation.voices.dto.CommentDTO;
 import com.generation.voices.model.Comment;
 
-// MapStruct genera automaticamente il codice di conversione a compile time.
-// componentModel = "spring" fa sì che MapStruct produca un @Component
-// che Spring può iniettare con @Autowired nei service.
-@Mapper(componentModel = "spring")
+// uses = PortalUserMapper.class: author (PortalUser → PortalUserDTO) viene gestito
+// automaticamente da PortalUserMapper, inclusa la traduzione username → nickname.
+@Mapper(componentModel = "spring", uses = PortalUserMapper.class)
 public interface CommentMapper {
 
-    // Quando converto da Comment a CommentDTO ho bisogno di "appiattire" la struttura:
-    // comment.post è un oggetto BlogPost, ma nel DTO voglio solo comment.post.id → postId.
-    // La sintassi "post.id" dice a MapStruct di navigare dentro l'oggetto annidato.
-    // Stesso ragionamento per author.id → authorId.
+    // L'unico campo che richiede @Mapping è postId: nel DTO è un int flat,
+    // nell'entità è un oggetto BlogPost. MapStruct non può inferirlo da solo.
+    // author e tutti gli altri campi hanno lo stesso nome → nessun mapping extra.
     @Mapping(source = "post.id", target = "postId")
-    @Mapping(source = "author.id", target = "authorId")
     CommentDTO toDTO(Comment comment);
 
-    // toDTOs non ha bisogno di @Mapping: MapStruct riutilizza in automatico
-    // il metodo toDTO() già definito sopra per ogni elemento della lista.
     List<CommentDTO> toDTOs(List<Comment> comments);
 
-    // Direzione inversa: dal DTO ricostruisco l'entità.
-    // postId (int) → comment.post.id: MapStruct crea un oggetto BlogPost vuoto
-    // con solo l'id valorizzato. È sufficiente perché JPA usa solo l'id
-    // per stabilire la foreign key in fase di save().
-    // Stesso meccanismo per authorId → comment.author.id.
+    // Direzione inversa: postId (int) → post.id nell'entità.
+    // MapStruct crea un BlogPost con solo l'id valorizzato,
+    // sufficiente per la FK in JPA durante il save().
     @Mapping(source = "postId", target = "post.id")
-    @Mapping(source = "authorId", target = "author.id")
     Comment toEntity(CommentDTO dto);
+
+    List<Comment> toEntities(List<CommentDTO> dtos);
 
 }

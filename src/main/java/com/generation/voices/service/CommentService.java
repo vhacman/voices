@@ -55,9 +55,9 @@ public class CommentService {
     // ancora prima di toccare il DB → il controller risponde 400.
     public CommentDTO save(@Valid CommentDTO dto) {
         Comment comment = commentMapper.toEntity(dto);
-        // Il client non manda createdAt: lo imposto qui con l'ora esatta del server.
+        // Il client non manda publishedOn: lo imposto qui con l'ora esatta del server.
         // Se lasciassi che il client lo mandasse, potrebbe falsificare la data.
-        comment.setCreatedAt(LocalDateTime.now());
+        comment.setPublishedOn(LocalDateTime.now());
         comment = commentRepository.save(comment);
         return commentMapper.toDTO(comment);
     }
@@ -68,11 +68,11 @@ public class CommentService {
                 .orElseThrow(() -> new EntityNotFoundException("Comment not found with id: " + id));
         Comment comment = commentMapper.toEntity(dto);
         comment.setId(id);
-        // Il mapper ricrea un oggetto Comment pulito dal DTO, quindi createdAt sarebbe null.
-        // Devo rileggere il commento originale dal DB per recuperare la data di creazione
+        // Il mapper ricrea un oggetto Comment pulito dal DTO, quindi publishedOn sarebbe null.
+        // Devo rileggere il commento originale dal DB per recuperare la data di pubblicazione
         // e riapplicarla: non voglio che un update azzeri la data.
         Comment original = commentRepository.findById(id).get();
-        comment.setCreatedAt(original.getCreatedAt());
+        comment.setPublishedOn(original.getPublishedOn());
         comment = commentRepository.save(comment);
         return commentMapper.toDTO(comment);
     }

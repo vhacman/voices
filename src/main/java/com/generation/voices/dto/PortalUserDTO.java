@@ -1,40 +1,22 @@
 package com.generation.voices.dto;
 
-import java.time.LocalDate;
-
 import com.generation.voices.model.enumerations.Role;
-
-import jakarta.persistence.Column;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+// DTO di sola lettura: viene restituito nelle risposte API.
+// Non include password per sicurezza.
+// Non include blogs per evitare riferimenti circolari (Blog → PortalUser → Blog...).
+// nickname è mappato dal campo username dell'entità tramite il mapper.
 @Data
 public class PortalUserDTO {
 
     private int id;
-    
-    @NotEmpty(message = "Firstname is required")
-    private String firstName;
-    
-    @NotEmpty(message = "Lastname is required")
-    private String lastName;
-    
-    @NotEmpty(message = "Username is required")
-    @Column(unique = true)
-    private String username;
-    
-    @NotNull(message = "Date of birth is required")
-    private LocalDate dob;
-    
-    @NotEmpty(message="Email is required")
-    @Column(unique = true)
-    private String email;
-    
-    @NotEmpty(message="Password is required")
-    private String password;
 
-    @NotNull(message="Role is required")
+    // Mappato da username nel PortalUserMapper
+    private String nickname;
+
+    private String email;
+
     private Role role;
 
 }

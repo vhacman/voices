@@ -39,8 +39,8 @@ public class Blog
     private String title;
 
     // sarà scelta da una lista di immagini disponibili
-    @NotEmpty(message = "Cover is required")
-    private String cover;
+    @NotEmpty(message = "Image is required")
+    private String image;
 
     @NotEmpty(message = "Description is required")
     private String description;
@@ -73,6 +73,8 @@ public class Blog
     // @ToString.Exclude: senza questo, @Data genera Blog.toString() che chiama posts,
     // che chiama BlogPost.toString() che chiama blog, che chiama Blog.toString() → loop infinito.
     @OneToMany(mappedBy = "blog", fetch = FetchType.LAZY)
+    // Esclude posts dal toString() generato da Lombok: senza questo,
+    // Blog.toString() → BlogPost.toString() → Blog.toString() → loop infinito.
     @ToString.Exclude
     List<BlogPost> posts = new ArrayList<BlogPost>();
 
@@ -121,7 +123,7 @@ public class Blog
         return "Blog{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
-                ", cover='" + cover + '\'' +
+                ", image='" + image + '\'' +
                 ", description='" + description + '\'' +
                 ", author=" + author +
                 ", template=" + template +

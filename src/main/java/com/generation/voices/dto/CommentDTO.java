@@ -5,31 +5,29 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-// Stesso pattern usato in BlogPostDTO e BlogDTO:
-// invece di mandare al client l'intero oggetto BlogPost annidato dentro Comment
-// (che porterebbe anche Blog, che porta altri BlogPost... esplosione di JSON),
-// mando solo gli id. Il frontend sa già quale post sta guardando, non ha bisogno
-// di ricevere tutti i dati annidati ogni volta.
 @Data
 public class CommentDTO {
 
     private int id;
 
-    @NotEmpty(message = "Content is required")
-    private String content;
+    // Rinominato da content a text per allinearlo al modello del prof
+    @NotEmpty(message = "Text is required")
+    private String text;
 
-    // Non valido createdAt con @NotNull: il client non lo deve mandare.
-    // È il service a impostarlo con LocalDateTime.now() al momento del salvataggio.
-    private LocalDateTime createdAt;
+    // Rinominato da createdAt a publishedOn per allinearlo al modello del prof.
+    // Non validato: il service lo imposta con LocalDateTime.now() al momento del salvataggio.
+    private LocalDateTime publishedOn;
 
-    // Passo solo l'id del post invece dell'oggetto BlogPost completo.
-    // Il mapper si occupa di convertire postId → comment.post.id (e viceversa).
+    // Autore del commento come oggetto annidato invece del solo authorId.
+    // Il mapper converte PortalUser → PortalUserDTO automaticamente.
+    @NotNull(message = "Author is required")
+    private PortalUserDTO author;
+
+    // postId mantenuto per le operazioni di scrittura (POST /comments):
+    // il client manda solo l'id del post, non l'oggetto annidato completo.
+    // Non includiamo BlogPostDTO per evitare riferimenti circolari
+    // (BlogPost → Comment → BlogPost → ...).
     @NotNull(message = "Post id is required")
     private int postId;
-
-    // Passo solo l'id dell'autore invece dell'oggetto PortalUser completo.
-    // Stessa logica di authorId in BlogDTO.
-    @NotNull(message = "Author id is required")
-    private int authorId;
 
 }

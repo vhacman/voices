@@ -89,10 +89,10 @@ public class BlogPostService
     {
         BlogPost blogPost = blogPostRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("BlogPost not found with id: " + id));
-        // getViewCount() + 1: leggo il valore attuale dal DB e aggiungo 1.
+        // getView() + 1: leggo il valore attuale dal DB e aggiungo 1.
         // Non uso una query SQL di incremento diretta per restare coerente
         // con il pattern usato nel resto del service (leggi → modifica → salva).
-        blogPost.setViewCount(blogPost.getViewCount() + 1);
+        blogPost.setView(blogPost.getView() + 1);
         blogPost = blogPostRepository.save(blogPost);
         return blogPostMapper.toDTO(blogPost);
     }

@@ -69,6 +69,7 @@ public class BlogAPI {
 
     // Archivio del blog: post raggruppati per anno → mese
     // GET /voices/api/blogs/{id}/archive
+    // il prof ha suggerito di chiamare questo tipo di API "loadPostsPeriodized"
     @GetMapping("/{id}/archive")
     public ResponseEntity<Object> getArchive(@PathVariable Integer id) {
         try {

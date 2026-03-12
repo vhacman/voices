@@ -24,16 +24,16 @@ public class Comment
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    // Uso TEXT come in BlogPost.content: un commento può essere lungo,
+    // Uso TEXT come in BlogPost.text: un commento può essere lungo,
     // VARCHAR(255) di default sarebbe troppo corto.
-    @NotEmpty(message = "Content is required")
+    @NotEmpty(message = "Text is required")
     @Column(columnDefinition = "TEXT")
-    private String content;
+    private String text;
 
-    // createdAt non ha @NotNull perché non lo manda il client:
+    // publishedOn non ha @NotNull perché non lo manda il client:
     // viene impostato nel CommentService.save() con LocalDateTime.now().
     // In questo modo la data è sempre quella del server, non manipolabile dall'utente.
-    private LocalDateTime createdAt;
+    private LocalDateTime publishedOn;
 
     // Relazione verso BlogPost: un commento appartiene a un solo post.
     // @JoinColumn(name = "post_id") crea la colonna FK nella tabella comment.
@@ -59,8 +59,8 @@ public class Comment
     public String toString() {
         return "Comment{" +
                 "id=" + id +
-                ", content='" + content + '\'' +
-                ", createdAt=" + createdAt +
+                ", text='" + text + '\'' +
+                ", publishedOn=" + publishedOn +
                 ", post=" + post +
                 ", author=" + author +
                 '}';

@@ -2,7 +2,11 @@ package com.generation.voices.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Data;
 
+// @Data genera i getter per i campi package-private (getYear(), getMonths())
+// necessari a BlogService per accedere ai dati senza riflection.
+@Data
 public class PostsByYear
 {
 

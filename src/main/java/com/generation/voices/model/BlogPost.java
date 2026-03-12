@@ -1,19 +1,24 @@
 package com.generation.voices.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import com.generation.voices.model.enumerations.BlogPostStatus;
 import lombok.Data;
+import lombok.ToString;
 
 @Entity
 @Data
@@ -39,19 +44,28 @@ public class BlogPost
 
     private String tags;
 
-    // Aggiunto viewCount per tracciare quante volte un post è stato aperto.
+    // Aggiunto view per tracciare quante volte un post è stato aperto.
     // Parte da 0: ogni chiamata a POST /{id}/view lo incrementa di 1 lato server.
     // Non lo metto @NotNull perché il default 0 va benissimo alla creazione.
-    private int viewCount = 0;
+    private int view = 0;
 
     @NotEmpty(message = "Title is required")
     private String title;
 
-    // Aggiunto columnDefinition = "TEXT" per evitare il limite di 255 caratteri di VARCHAR
-    // necessario per contenuti lunghi come un post di un blog
-    @NotEmpty(message = "Content is required")
+    // JPA mappa String come VARCHAR(255) di default: troppo poco per il corpo di un articolo.
+    // columnDefinition = "TEXT" forza MySQL a usare il tipo TEXT (fino a 65.535 caratteri).
+    @NotEmpty(message = "Text is required")
     @Column(columnDefinition = "TEXT")
-    private String content;
+    private String text;
+
+    // Immagine di copertina del post — richiesta dal modello del prof
+    private String image;
+
+    // Relazione verso i commenti: un post ha molti commenti.
+    // @ToString.Exclude per evitare ricorsione infinita: Comment ha un riferimento a BlogPost.
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private List<Comment> comments = new ArrayList<>();
 
     // Ho dovuto scrivere toString() a mano invece di affidarmi a @Data di Lombok.
     // Il problema: BlogPost ha un campo "blog" (Blog) e Blog ha una lista "posts" (List<BlogPost>).
@@ -66,9 +80,10 @@ public class BlogPost
                 ", publishedOn=" + publishedOn +
                 ", status=" + status +
                 ", tags='" + tags + '\'' +
-                ", viewCount=" + viewCount +
+                ", view=" + view +
                 ", title='" + title + '\'' +
-                ", content='" + content + '\'' +
+                ", text='" + text + '\'' +
+                ", image='" + image + '\'' +
                 '}';
     }
 }

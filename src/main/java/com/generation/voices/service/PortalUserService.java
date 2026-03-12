@@ -1,6 +1,7 @@
 package com.generation.voices.service;
 
 import com.generation.voices.dto.PortalUserDTO;
+import com.generation.voices.dto.RegisterDTO;
 import com.generation.voices.mapper.PortalUserMapper;
 import com.generation.voices.model.PortalUser;
 import com.generation.voices.repository.PortalUserRepository;
@@ -42,20 +43,34 @@ public class PortalUserService
         return portalUserMapper.toDTO(user);
     }
 
-    public PortalUserDTO save(@Valid PortalUserDTO userDTO)
+    /*
+     * Ho separato il DTO di input (RegisterDTO) da quello di output (PortalUserDTO).
+     * Prima usavo un solo PortalUserDTO per tutto, ma questo mi obbligava a mettere
+     * la password nel DTO di risposta — un problema di sicurezza.
+     * Ora il client manda un RegisterDTO (con password in chiaro) e riceve indietro
+     * un PortalUserDTO (senza password), generato dal mapper partendo dall'entità salvata.
+     * La password viene hashata qui nel service, prima della conversione in entità,
+     * così nel DB arriva sempre l'hash MD5 e mai la password in chiaro.
+     */
+    public PortalUserDTO save(@Valid RegisterDTO registerDTO)
     {
-        userDTO.setPassword(passwordHasher.toMD5(userDTO.getPassword()));
-        PortalUser user = portalUserMapper.toEntity(userDTO);
+        registerDTO.setPassword(passwordHasher.toMD5(registerDTO.getPassword()));
+        PortalUser user = portalUserMapper.toEntity(registerDTO);
         user = portalUserRepository.save(user);
         return portalUserMapper.toDTO(user);
     }
 
-    public PortalUserDTO update(Integer id, @Valid PortalUserDTO userDTO)
+    /*
+     * Stesso ragionamento di save(): ricevo RegisterDTO in ingresso (con password),
+     * forzo l'id sull'entità per fare un UPDATE invece di un INSERT,
+     * e restituisco PortalUserDTO senza password.
+     */
+    public PortalUserDTO update(Integer id, @Valid RegisterDTO registerDTO)
     {
         portalUserRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("PortalUser non trovato con id: " + id));
-        userDTO.setPassword(passwordHasher.toMD5(userDTO.getPassword()));
-        PortalUser user = portalUserMapper.toEntity(userDTO);
+        registerDTO.setPassword(passwordHasher.toMD5(registerDTO.getPassword()));
+        PortalUser user = portalUserMapper.toEntity(registerDTO);
         user.setId(id);
         user = portalUserRepository.save(user);
         return portalUserMapper.toDTO(user);

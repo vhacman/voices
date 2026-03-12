@@ -1,7 +1,8 @@
 package com.generation.voices.api;
 
-import com.generation.voices.dto.LoginRequest;
+import com.generation.voices.dto.LoginRequestDTO;
 import com.generation.voices.dto.PortalUserDTO;
+import com.generation.voices.dto.RegisterDTO;
 import com.generation.voices.service.PortalUserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
@@ -40,8 +41,14 @@ public class PortalUserAPI {
         }
     }
 
+    /*
+     * POST e PUT usano RegisterDTO invece di PortalUserDTO perché la registrazione
+     * e l'aggiornamento richiedono la password — che non deve mai apparire
+     * nel DTO di risposta. Il client manda RegisterDTO, riceve PortalUserDTO.
+     * In questo modo la password non esce mai nelle risposte, nemmeno hashata.
+     */
     @PostMapping
-    public ResponseEntity<Object> insert(@Valid @RequestBody PortalUserDTO dto) {
+    public ResponseEntity<Object> insert(@Valid @RequestBody RegisterDTO dto) {
         try {
             return ResponseEntity.status(201).body(service.save(dto));
         } catch (ConstraintViolationException e) {
@@ -50,7 +57,7 @@ public class PortalUserAPI {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> update(@PathVariable Integer id, @Valid @RequestBody PortalUserDTO dto) {
+    public ResponseEntity<Object> update(@PathVariable Integer id, @Valid @RequestBody RegisterDTO dto) {
         try {
             return ResponseEntity.ok(service.update(id, dto));
         } catch (EntityNotFoundException e) {
@@ -73,7 +80,7 @@ public class PortalUserAPI {
      * oppure 401 se le credenziali sono errate.
      */
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<Map<String, String>> login(@Valid @RequestBody LoginRequestDTO request) {
         try {
             return ResponseEntity.ok(service.login(request.getUsername(), request.getPassword()));
         } catch (IllegalArgumentException e) {
