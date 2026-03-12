@@ -9,7 +9,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class BlogPostDTO {
+public class BlogPostDTO
+{
 
     private int id;
 

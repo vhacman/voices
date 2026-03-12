@@ -19,39 +19,43 @@ import org.springframework.validation.annotation.Validated;
 
 @Service
 @Validated
-public class BlogService {
+public class BlogService
+{
 
     @Autowired
     private BlogRepository blogRepository;
-
     @Autowired
     private BlogPostRepository blogPostRepository;
-
     @Autowired
     private BlogMapper blogMapper;
 
-    public List<BlogDTO> findAll() {
+    public List<BlogDTO> findAll()
+    {
         return blogMapper.toDTOs(blogRepository.findAll());
     }
 
     // Per i visitatori non loggati: solo blog con visibility PUBLIC.
-    public List<BlogDTO> findAllPublic() {
+    public List<BlogDTO> findAllPublic()
+    {
         return blogMapper.toDTOs(blogRepository.findByVisibility(Visibility.PUBLIC));
     }
 
-    public BlogDTO findById(Integer id) {
+    public BlogDTO findById(Integer id)
+    {
         Blog blog = blogRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Blog not found with id: " + id));
         return blogMapper.toDTO(blog);
     }
 
-    public BlogDTO save(@Valid BlogDTO blogDTO) {
+    public BlogDTO save(@Valid BlogDTO blogDTO)
+    {
         Blog blog = blogMapper.toEntity(blogDTO);
         blog = blogRepository.save(blog);
         return blogMapper.toDTO(blog);
     }
 
-    public BlogDTO update(Integer id, @Valid BlogDTO blogDTO) {
+    public BlogDTO update(Integer id, @Valid BlogDTO blogDTO)
+    {
         // Verifica che il blog esista prima di aggiornare
         blogRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Blog not found with id: " + id));
@@ -61,7 +65,8 @@ public class BlogService {
         return blogMapper.toDTO(blog);
     }
 
-    public void deleteById(Integer id) {
+    public void deleteById(Integer id)
+    {
         blogRepository.deleteById(id);
     }
 
@@ -70,13 +75,15 @@ public class BlogService {
      * Usato dal frontend per costruire la vista "Archivio" del blog.
      * Esempio risposta: { 2024: { months: [...] }, 2025: { months: [...] } }
      */
-    public Map<Integer, PostsByYear> getPostsByYearAndMonth(Integer blogId) {
+    public Map<Integer, PostsByYear> getPostsByYearAndMonth(Integer blogId)
+    {
         blogRepository.findById(blogId)
                 .orElseThrow(() -> new EntityNotFoundException("Blog not found with id: " + blogId));
 
         List<BlogPost> posts = blogPostRepository.findByBlogId(blogId);
 
-        if (posts.isEmpty()) return new LinkedHashMap<>();
+        if (posts.isEmpty())
+            return new LinkedHashMap<>();
 
         int minYear = posts.stream().filter(p -> p.getPublishedOn() != null)
                 .mapToInt(p -> p.getPublishedOn().getYear()).min().orElse(0);

@@ -20,63 +20,84 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/voices/api/posts")
-public class BlogPostAPI {
+public class BlogPostAPI
+{
 
     @Autowired
     BlogPostService service;
 
     @GetMapping
-    public ResponseEntity<List<BlogPostDTO>> findAll() {
+    public ResponseEntity<List<BlogPostDTO>> findAll()
+    {
         return ResponseEntity.ok(service.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> findById(@PathVariable Integer id) {
-        try {
+    public ResponseEntity<Object> findById(@PathVariable Integer id)
+    {
+        try
+        {
             return ResponseEntity.ok(service.findById(id));
-        } catch (EntityNotFoundException e) {
+        }
+        catch (EntityNotFoundException e)
+        {
             return ResponseEntity.status(404).body(e.getMessage());
         }
     }
 
     // Ritorna tutti i post di un blog specifico
     @GetMapping("/blog/{blogId}")
-    public ResponseEntity<List<BlogPostDTO>> findByBlogId(@PathVariable int blogId) {
+    public ResponseEntity<List<BlogPostDTO>> findByBlogId(@PathVariable int blogId)
+    {
         return ResponseEntity.ok(service.findByBlogId(blogId));
     }
 
     @PostMapping
-    public ResponseEntity<Object> insert(@Valid @RequestBody BlogPostDTO dto) {
-        try {
+    public ResponseEntity<Object> insert(@Valid @RequestBody BlogPostDTO dto)
+    {
+        try
+        {
             return ResponseEntity.status(201).body(service.save(dto));
-        } catch (ConstraintViolationException e) {
+        }
+        catch (ConstraintViolationException e)
+        {
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Object> update(@PathVariable Integer id, @Valid @RequestBody BlogPostDTO dto) {
-        try {
+        try
+        {
             return ResponseEntity.ok(service.update(id, dto));
-        } catch (EntityNotFoundException e) {
+        }
+        catch (EntityNotFoundException e)
+        {
             return ResponseEntity.status(404).body(e.getMessage());
-        } catch (ConstraintViolationException e) {
+        }
+        catch (ConstraintViolationException e)
+        {
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+    public ResponseEntity<Void> delete(@PathVariable Integer id)
+    {
         service.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
     // Incrementa il contatore di visualizzazioni — chiamato dal frontend al caricamento del post
     @PostMapping("/{id}/view")
-    public ResponseEntity<Object> incrementViewCount(@PathVariable Integer id) {
-        try {
+    public ResponseEntity<Object> incrementViewCount(@PathVariable Integer id)
+    {
+        try
+        {
             return ResponseEntity.ok(service.incrementViewCount(id));
-        } catch (EntityNotFoundException e) {
+        }
+        catch (EntityNotFoundException e)
+        {
             return ResponseEntity.status(404).body(e.getMessage());
         }
     }

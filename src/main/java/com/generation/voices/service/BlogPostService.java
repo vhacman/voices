@@ -18,26 +18,26 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public class BlogPostService
 {
-
     // Spring inietta automaticamente le dipendenze grazie a @Autowired.
     // Non istanzio mai repository e mapper con "new": ci pensa Spring a creare
     // e gestire questi oggetti nel suo contesto (IoC - Inversion of Control).
     @Autowired
     private BlogPostRepository blogPostRepository;
-
     @Autowired
     private BlogPostMapper blogPostMapper;
 
     // findAll() non ha bisogno di gestire eccezioni: se non ci sono post restituisce lista vuota,
     // non lancia errori. Il mapper converte la lista di entità in lista di DTO in un colpo solo.
-    public List<BlogPostDTO> findAll() {
+    public List<BlogPostDTO> findAll()
+    {
         return blogPostMapper.toDTOs(blogPostRepository.findAll());
     }
 
     // findById usa orElseThrow: se l'id non esiste nel DB lancia EntityNotFoundException
     // invece di restituire null. Il controller la cattura e risponde con 404.
     // È più esplicito e sicuro che fare un controllo manuale su null.
-    public BlogPostDTO findById(Integer id) {
+    public BlogPostDTO findById(Integer id)
+    {
         BlogPost blogPost = blogPostRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("BlogPost not found with id: " + id));
         return blogPostMapper.toDTO(blogPost);
@@ -96,5 +96,4 @@ public class BlogPostService
         blogPost = blogPostRepository.save(blogPost);
         return blogPostMapper.toDTO(blogPost);
     }
-
 }

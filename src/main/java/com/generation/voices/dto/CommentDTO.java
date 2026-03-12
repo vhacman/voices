@@ -6,7 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class CommentDTO {
+public class CommentDTO
+{
 
     private int id;
 

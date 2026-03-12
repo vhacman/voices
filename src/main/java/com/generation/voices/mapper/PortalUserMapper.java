@@ -13,7 +13,8 @@ import com.generation.voices.model.PortalUser;
 // Invece di rinominare il campo nel DB o nell'entità, uso @Mapping per fare la traduzione
 // solo a livello di DTO: il DB rimane invariato, il frontend riceve quello che si aspetta.
 @Mapper(componentModel = "spring")
-public interface PortalUserMapper {
+public interface PortalUserMapper
+{
 
     // username nell'entità → nickname nel DTO (il prof chiama così il campo nel frontend)
     @Mapping(source = "username", target = "nickname")

@@ -9,7 +9,8 @@ import com.generation.voices.model.Comment;
 // uses = PortalUserMapper.class: author (PortalUser → PortalUserDTO) viene gestito
 // automaticamente da PortalUserMapper, inclusa la traduzione username → nickname.
 @Mapper(componentModel = "spring", uses = PortalUserMapper.class)
-public interface CommentMapper {
+public interface CommentMapper
+{
 
     // L'unico campo che richiede @Mapping è postId: nel DTO è un int flat,
     // nell'entità è un oggetto BlogPost. MapStruct non può inferirlo da solo.

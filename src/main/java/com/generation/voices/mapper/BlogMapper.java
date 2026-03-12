@@ -12,7 +12,8 @@ import com.generation.voices.model.Blog;
 // (il campo author), riutilizza il mapper già esistente invece di generarne uno nuovo.
 // Senza "uses", MapStruct non saprebbe come mappare l'oggetto annidato e darebbe errore a compile time.
 @Mapper(componentModel = "spring", uses = PortalUserMapper.class)
-public interface BlogMapper {
+public interface BlogMapper
+{
 
     // Tutti i campi hanno lo stesso nome tra entità e DTO → nessun @Mapping necessario.
     // author (PortalUser) → author (PortalUserDTO): gestito automaticamente da PortalUserMapper.

@@ -7,7 +7,8 @@ import lombok.Data;
 // Non serve la vecchia perché l'endpoint è protetto da JWT —
 // se hai un token valido sei già identificato.
 @Data
-public class ChangePasswordDTO {
+public class ChangePasswordDTO
+{
 
     @NotEmpty(message = "La nuova password è obbligatoria")
     private String newPassword;

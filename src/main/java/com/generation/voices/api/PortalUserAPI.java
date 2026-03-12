@@ -30,45 +30,61 @@ public class PortalUserAPI {
 
     // Solo ADMIN: lista completa degli utenti
     @GetMapping
-    public ResponseEntity<List<PortalUserDTO>> findAll() {
+    public ResponseEntity<List<PortalUserDTO>> findAll()
+    {
         return ResponseEntity.ok(service.findAll());
     }
 
     // Solo ADMIN: dettaglio singolo utente
     @GetMapping("/{id}")
-    public ResponseEntity<Object> findById(@PathVariable Integer id) {
-        try {
+    public ResponseEntity<Object> findById(@PathVariable Integer id)
+    {
+        try
+        {
             return ResponseEntity.ok(service.findById(id));
-        } catch (EntityNotFoundException e) {
+        }
+        catch (EntityNotFoundException e)
+        {
             return ResponseEntity.status(404).body(e.getMessage());
         }
     }
 
     // Solo ADMIN: crea utente con ruolo a scelta
     @PostMapping
-    public ResponseEntity<Object> insert(@Valid @RequestBody RegisterDTO dto) {
-        try {
+    public ResponseEntity<Object> insert(@Valid @RequestBody RegisterDTO dto)
+    {
+        try
+        {
             return ResponseEntity.status(201).body(service.save(dto));
-        } catch (ConstraintViolationException e) {
+        }
+        catch (ConstraintViolationException e)
+        {
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
 
     // Solo ADMIN: modifica utente
     @PutMapping("/{id}")
-    public ResponseEntity<Object> update(@PathVariable Integer id, @Valid @RequestBody RegisterDTO dto) {
-        try {
+    public ResponseEntity<Object> update(@PathVariable Integer id, @Valid @RequestBody RegisterDTO dto)
+    {
+        try
+        {
             return ResponseEntity.ok(service.update(id, dto));
-        } catch (EntityNotFoundException e) {
+        }
+        catch (EntityNotFoundException e)
+        {
             return ResponseEntity.status(404).body(e.getMessage());
-        } catch (ConstraintViolationException e) {
+        }
+        catch (ConstraintViolationException e)
+        {
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
 
     // Solo ADMIN: elimina utente
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+    public ResponseEntity<Void> delete(@PathVariable Integer id)
+    {
         service.deleteById(id);
         return ResponseEntity.noContent().build();
     }
@@ -77,10 +93,14 @@ public class PortalUserAPI {
     // Separato da POST /users (ADMIN) perché la logica è diversa:
     // qui il ruolo è forzato a BLOGGER, lì l'ADMIN può sceglierlo.
     @PostMapping("/register")
-    public ResponseEntity<Object> register(@Valid @RequestBody RegisterDTO dto) {
-        try {
+    public ResponseEntity<Object> register(@Valid @RequestBody RegisterDTO dto)
+    {
+        try
+        {
             return ResponseEntity.status(201).body(service.register(dto));
-        } catch (ConstraintViolationException e) {
+        }
+        catch (ConstraintViolationException e)
+        {
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
@@ -89,10 +109,14 @@ public class PortalUserAPI {
     // La risposta include mustChangePassword: se true il frontend
     // deve mandare l'utente sulla schermata di cambio password obbligato.
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@Valid @RequestBody LoginRequestDTO request) {
-        try {
+    public ResponseEntity<Map<String, String>> login(@Valid @RequestBody LoginRequestDTO request)
+    {
+        try
+        {
             return ResponseEntity.ok(service.login(request.getUsername(), request.getPassword()));
-        } catch (IllegalArgumentException e) {
+        }
+        catch (IllegalArgumentException e)
+        {
             return ResponseEntity.status(401).build();
         }
     }
@@ -100,11 +124,15 @@ public class PortalUserAPI {
     // Cambio password: richiede JWT (utente loggato).
     // Usato sia per il cambio volontario che per quello forzato post-login.
     @PutMapping("/{id}/password")
-    public ResponseEntity<Object> changePassword(@PathVariable Integer id, @Valid @RequestBody ChangePasswordDTO dto) {
-        try {
+    public ResponseEntity<Object> changePassword(@PathVariable Integer id, @Valid @RequestBody ChangePasswordDTO dto)
+    {
+        try
+        {
             service.changePassword(id, dto);
             return ResponseEntity.noContent().build();
-        } catch (EntityNotFoundException e) {
+        }
+        catch (EntityNotFoundException e)
+        {
             return ResponseEntity.status(404).body(e.getMessage());
         }
     }

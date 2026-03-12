@@ -6,7 +6,5 @@ import com.generation.voices.model.PortalUser;
 
 public interface PortalUserRepository extends JpaRepository<PortalUser, Integer>
 {
-
     Optional<PortalUser> findByUsername(String username);
-
 }

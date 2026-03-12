@@ -1,9 +1,7 @@
 package com.generation.voices.model;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -32,7 +30,7 @@ public class Blog
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    
+
     @NotEmpty(message = "Title is required")
     @Size(max = 100, message = "Title must be less than 100 characters")
     @Column(unique = true)
@@ -44,12 +42,12 @@ public class Blog
 
     @NotEmpty(message = "Description is required")
     private String description;
-    
+
     @NotNull(message = "Author is required")
     @ManyToOne
     @JoinColumn(name = "author_id")
     private PortalUser author;
-    
+
     @NotNull(message = "Template is required")
     @Enumerated(EnumType.STRING)
     private Template template;
@@ -73,50 +71,8 @@ public class Blog
     // @ToString.Exclude: senza questo, @Data genera Blog.toString() che chiama posts,
     // che chiama BlogPost.toString() che chiama blog, che chiama Blog.toString() → loop infinito.
     @OneToMany(mappedBy = "blog", fetch = FetchType.LAZY)
-    // Esclude posts dal toString() generato da Lombok: senza questo,
-    // Blog.toString() → BlogPost.toString() → Blog.toString() → loop infinito.
     @ToString.Exclude
     List<BlogPost> posts = new ArrayList<BlogPost>();
-
-
-    // Metodo scritto dal prof: organizza i post del blog per anno e mese.
-    // Serve per la vista "archivio" laterale (tipo sidebar con "Marzo 2024 (3 post)").
-    // Restituisce una Map<anno, PostsByYear> dove ogni PostsByYear contiene 12 PostsByMonth.
-    public Map<Integer, PostsByYear> getPostsByYearAndMonth()
-    {
-        // Cerco il range di anni tra tutti i post: parto da valori sentinella estremi.
-        // minYear = 4500 e maxYear = 0: qualsiasi anno reale li sostituirà al primo ciclo.
-        int minYear = 4500;
-        int maxYear = 0;
-
-        // Scorro tutti i post per trovare l'anno più vecchio e quello più recente.
-        // Uso due if separati e non un else: ogni post aggiorna entrambe le variabili
-        // se necessario (con un solo post, quell'anno è sia min che max).
-        for(BlogPost p:posts)
-        {
-            if(p.getPublishedOn().getYear()<minYear)
-                minYear = p.getPublishedOn().getYear();
-            if(p.getPublishedOn().getYear()>maxYear)
-                maxYear = p.getPublishedOn().getYear();
-        }
-
-        // Creo una entry PostsByYear per ogni anno nel range.
-        // LinkedHashMap mantiene l'ordine di inserimento → gli anni escono in ordine cronologico.
-        Map<Integer, PostsByYear> res = new LinkedHashMap<Integer,PostsByYear>();
-        for(int year=minYear;year<=maxYear;year++)
-            res.put(year, new PostsByYear(year));
-
-        for(BlogPost p:posts)
-        {
-            // getMonthValue() restituisce 1-12, ma months[] è 0-indexed → devo sottrarre 1.
-            // Senza il -1, gennaio (1) finirebbe in months[1] che è febbraio: bug silenzioso.
-            int year = p.getPublishedOn().getYear();
-            int month = p.getPublishedOn().getMonthValue()-1;
-            res.get(year).months[month].posts.add(p);
-        }
-
-        return res;
-    }
 
     @Override
     public String toString() {

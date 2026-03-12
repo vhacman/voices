@@ -15,7 +15,8 @@ import lombok.Data;
 
 @Entity
 @Data
-public class PortalUser {
+public class PortalUser
+{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

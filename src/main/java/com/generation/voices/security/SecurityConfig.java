@@ -21,8 +21,8 @@ import java.util.List;
 // per una REST API con JWT.
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig {
-
+public class SecurityConfig
+{
     // Mi serve il filtro JWT che ho scritto: lo inietto qui
     // per poterlo inserire nella catena di filtri più avanti.
     @Autowired
@@ -32,7 +32,8 @@ public class SecurityConfig {
     // L'ordine dei filtri e delle regole conta: Spring applica
     // la prima regola che matcha e si ferma.
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception
+    {
         http
             // Disabilito CSRF perché con JWT stateless non serve:
             // il token va messo a mano nell'header Authorization,
@@ -43,41 +44,33 @@ public class SecurityConfig {
             // altrimenti le preflight OPTIONS di Angular vengono bloccate
             // con 403 prima ancora di arrivare alla logica CORS.
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-
             .authorizeHttpRequests(auth -> auth
-
                 // Il login deve essere pubblico: è l'unico endpoint
                 // che non ha ancora un token perché lo sta producendo.
                 // La registrazione è pubblica: chiunque può crearsi un account.
                 .requestMatchers("/voices/api/users/login", "/voices/api/users/register").permitAll()
-
                 // Un visitatore non loggato può leggere blog, post e archivio.
                 // Non ha senso richiedere il login solo per sfogliare i contenuti.
                 // Limitato ai soli GET: POST/PUT/DELETE restano protetti.
                 .requestMatchers(HttpMethod.GET, "/voices/api/blogs/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/voices/api/posts/**").permitAll()
-
                 // La gestione degli utenti è solo per ADMIN.
                 // Un BLOGGER non deve poter vedere, modificare o cancellare account.
                 // Nota: hasRole("ADMIN") cerca "ROLE_ADMIN" nel SecurityContext —
                 // il prefisso ROLE_ lo aggiunge CustomUserDetailsService.
                 .requestMatchers("/voices/api/users/**").hasRole("ADMIN")
-
                 // Tutto il resto richiede solo di essere loggati,
                 // sia BLOGGER che ADMIN. Se il token manca o è scaduto → 401.
                 .anyRequest().authenticated()
             )
-
             // STATELESS: non voglio sessioni lato server.
             // L'identità dell'utente è tutta dentro il JWT.
             // Ad ogni request il filtro lo rilegge e ricostruisce il contesto.
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
             // Metto il mio filtro JWT prima di quello standard di Spring.
             // In questo modo quando Spring controlla l'autenticazione,
             // il SecurityContext è già stato popolato dal mio filtro.
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
 
@@ -85,22 +78,18 @@ public class SecurityConfig {
     // Il browser blocca le chiamate cross-origin per default (same-origin policy).
     // Qui dico al browser che localhost:4200 è un'origine fidata.
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
+    public CorsConfigurationSource corsConfigurationSource()
+    {
         CorsConfiguration config = new CorsConfiguration();
-
         // Solo Angular in locale — in produzione va cambiato col dominio reale.
         config.setAllowedOrigins(List.of("http://localhost:4200"));
-
         // Tutti i metodi che usano le mie API.
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-
         // Authorization serve per il JWT, Content-Type per mandare JSON nel body.
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
-
         // Il browser mette in cache la risposta preflight per un'ora:
         // evita di fare una request OPTIONS prima di ogni chiamata.
         config.setMaxAge(3600L);
-
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;

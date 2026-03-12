@@ -8,7 +8,8 @@ import lombok.Data;
 // Non include blogs per evitare riferimenti circolari (Blog → PortalUser → Blog...).
 // nickname è mappato dal campo username dell'entità tramite il mapper.
 @Data
-public class PortalUserDTO {
+public class PortalUserDTO
+{
 
     private int id;
 

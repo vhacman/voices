@@ -14,7 +14,8 @@ import com.generation.voices.model.BlogPost;
 // MapStruct non genera mapper per oggetti annidati da solo: devo dirgli esplicitamente
 // quali mapper usare, altrimenti errore di compilazione.
 @Mapper(componentModel = "spring", uses = {BlogMapper.class, CommentMapper.class})
-public interface BlogPostMapper {
+public interface BlogPostMapper
+{
 
     // Tutti i campi hanno lo stesso nome tra entità e DTO → nessun @Mapping necessario.
     // blog (Blog) → blog (BlogDTO): gestito da BlogMapper.
