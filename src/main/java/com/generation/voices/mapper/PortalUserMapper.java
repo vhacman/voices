@@ -30,6 +30,7 @@ public interface PortalUserMapper {
     @Mapping(target = "lastName", ignore = true)
     @Mapping(target = "dob", ignore = true)
     @Mapping(target = "password", ignore = true)
+    @Mapping(target = "lastPasswordChange", ignore = true)
     PortalUser toEntity(PortalUserDTO portalUserDTO);
 
     List<PortalUser> toEntities(List<PortalUserDTO> portalUserDTOs);
@@ -38,6 +39,8 @@ public interface PortalUserMapper {
     // Usato solo in save() e update() nel service.
     // La password viene hashata nel service PRIMA di chiamare questo metodo.
     @Mapping(source = "nickname", target = "username")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "lastPasswordChange", ignore = true)
     PortalUser toEntity(RegisterDTO registerDTO);
 
 }

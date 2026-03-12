@@ -45,6 +45,11 @@ public class PortalUser {
     @NotNull(message="Role is required")
     private Role role;
 
+    // Tengo traccia di quando l'utente ha cambiato la password l'ultima volta.
+    // Lo imposto al momento della registrazione e lo aggiorno ad ogni cambio password.
+    // Serve per forzare il cambio periodico: 2 settimane per ADMIN, 3 mesi per BLOGGER.
+    private LocalDate lastPasswordChange;
+
     @Override
     public String toString() {
         return "PortalUser{" +
@@ -56,6 +61,7 @@ public class PortalUser {
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", role=" + role +
+                ", lastPasswordChange=" + lastPasswordChange +
                 '}';
     }
 }

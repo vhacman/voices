@@ -5,6 +5,7 @@ import com.generation.voices.mapper.BlogMapper;
 import com.generation.voices.model.Blog;
 import com.generation.voices.model.BlogPost;
 import com.generation.voices.model.PostsByYear;
+import com.generation.voices.model.enumerations.Visibility;
 import com.generation.voices.repository.BlogPostRepository;
 import com.generation.voices.repository.BlogRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -31,6 +32,11 @@ public class BlogService {
 
     public List<BlogDTO> findAll() {
         return blogMapper.toDTOs(blogRepository.findAll());
+    }
+
+    // Per i visitatori non loggati: solo blog con visibility PUBLIC.
+    public List<BlogDTO> findAllPublic() {
+        return blogMapper.toDTOs(blogRepository.findByVisibility(Visibility.PUBLIC));
     }
 
     public BlogDTO findById(Integer id) {

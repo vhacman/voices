@@ -1,5 +1,6 @@
 package com.generation.voices.api;
 
+import com.generation.voices.dto.ChangePasswordDTO;
 import com.generation.voices.dto.LoginRequestDTO;
 import com.generation.voices.dto.PortalUserDTO;
 import com.generation.voices.dto.RegisterDTO;
@@ -27,11 +28,13 @@ public class PortalUserAPI {
     @Autowired
     PortalUserService service;
 
+    // Solo ADMIN: lista completa degli utenti
     @GetMapping
     public ResponseEntity<List<PortalUserDTO>> findAll() {
         return ResponseEntity.ok(service.findAll());
     }
 
+    // Solo ADMIN: dettaglio singolo utente
     @GetMapping("/{id}")
     public ResponseEntity<Object> findById(@PathVariable Integer id) {
         try {
@@ -41,12 +44,7 @@ public class PortalUserAPI {
         }
     }
 
-    /*
-     * POST e PUT usano RegisterDTO invece di PortalUserDTO perché la registrazione
-     * e l'aggiornamento richiedono la password — che non deve mai apparire
-     * nel DTO di risposta. Il client manda RegisterDTO, riceve PortalUserDTO.
-     * In questo modo la password non esce mai nelle risposte, nemmeno hashata.
-     */
+    // Solo ADMIN: crea utente con ruolo a scelta
     @PostMapping
     public ResponseEntity<Object> insert(@Valid @RequestBody RegisterDTO dto) {
         try {
@@ -56,6 +54,7 @@ public class PortalUserAPI {
         }
     }
 
+    // Solo ADMIN: modifica utente
     @PutMapping("/{id}")
     public ResponseEntity<Object> update(@PathVariable Integer id, @Valid @RequestBody RegisterDTO dto) {
         try {
@@ -67,24 +66,46 @@ public class PortalUserAPI {
         }
     }
 
+    // Solo ADMIN: elimina utente
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         service.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
-    /*
-     * Endpoint di login: pubblico (non richiede JWT).
-     * Accetta { "username": "...", "password": "..." }
-     * Restituisce { "token": "eyJ..." } in caso di successo,
-     * oppure 401 se le credenziali sono errate.
-     */
+    // Pubblico: chiunque può registrarsi, viene creato come BLOGGER.
+    // Separato da POST /users (ADMIN) perché la logica è diversa:
+    // qui il ruolo è forzato a BLOGGER, lì l'ADMIN può sceglierlo.
+    @PostMapping("/register")
+    public ResponseEntity<Object> register(@Valid @RequestBody RegisterDTO dto) {
+        try {
+            return ResponseEntity.status(201).body(service.register(dto));
+        } catch (ConstraintViolationException e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
+    }
+
+    // Pubblico: login con username e password.
+    // La risposta include mustChangePassword: se true il frontend
+    // deve mandare l'utente sulla schermata di cambio password obbligato.
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@Valid @RequestBody LoginRequestDTO request) {
         try {
             return ResponseEntity.ok(service.login(request.getUsername(), request.getPassword()));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(401).build();
+        }
+    }
+
+    // Cambio password: richiede JWT (utente loggato).
+    // Usato sia per il cambio volontario che per quello forzato post-login.
+    @PutMapping("/{id}/password")
+    public ResponseEntity<Object> changePassword(@PathVariable Integer id, @Valid @RequestBody ChangePasswordDTO dto) {
+        try {
+            service.changePassword(id, dto);
+            return ResponseEntity.noContent().build();
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
         }
     }
 

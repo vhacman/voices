@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,9 +28,12 @@ public class BlogAPI {
     @Autowired
     BlogService service;
 
+    // Authentication è null se la request non ha JWT (visitatore non loggato).
+    // In quel caso mostro solo i blog PUBLIC; se è loggato vede tutto.
     @GetMapping
-    public ResponseEntity<List<BlogDTO>> findAll() {
-        return ResponseEntity.ok(service.findAll());
+    public ResponseEntity<List<BlogDTO>> findAll(Authentication authentication) {
+        boolean isLoggedIn = authentication != null && authentication.isAuthenticated();
+        return ResponseEntity.ok(isLoggedIn ? service.findAll() : service.findAllPublic());
     }
 
     @GetMapping("/{id}")
