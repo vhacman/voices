@@ -44,6 +44,18 @@ public class PortalUser {
     @Enumerated(EnumType.STRING)
     @NotNull(message="Role is required")
     private Role role;
-       
 
+    @Override
+    public String toString() {
+        return "PortalUser{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", username='" + username + '\'' +
+                ", dob=" + dob +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", role=" + role +
+                '}';
+    }
 }

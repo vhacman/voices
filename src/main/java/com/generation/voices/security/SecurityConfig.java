@@ -103,14 +103,8 @@ public class SecurityConfig {
                  * Il login deve essere pubblico per forza:
                  * è l'unica route che produce il token.
                  * Se richiedesse autenticazione, nessuno potrebbe mai autenticarsi.
-                 *
-                 * La registrazione (POST /users) è pubblica perché un nuovo utente
-                 * non ha ancora un token — non può registrarsi se deve già essere loggato.
-                 * Specifichiamo HttpMethod.POST per non aprire tutti i metodi su /users.
                  */
                 .requestMatchers("/voices/api/users/login").permitAll()
-                .requestMatchers(HttpMethod.POST, "/voices/api/users").permitAll()
-
                 /*
                  * ROTTE SOLO ADMIN — ruolo ADMIN richiesto.
                  *
