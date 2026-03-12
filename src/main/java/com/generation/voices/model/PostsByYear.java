@@ -3,7 +3,8 @@ package com.generation.voices.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PostsByYear {
+public class PostsByYear
+{
 
     // i mesi sono un vettore di liste di post
     int year;

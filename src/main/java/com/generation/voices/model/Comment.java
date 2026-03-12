@@ -17,7 +17,8 @@ import lombok.Data;
 // Nel diagramma E-R un Comment appartiene a un solo BlogPost e viene scritto da un solo PortalUser.
 @Entity
 @Data
-public class Comment {
+public class Comment
+{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,7 +49,6 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "author_id")
     private PortalUser author;
-
 
     // toString() scritto a mano per lo stesso motivo di BlogPost:
     // Comment → post (BlogPost) → blog (Blog) → posts (List<BlogPost>) → loop infinito.

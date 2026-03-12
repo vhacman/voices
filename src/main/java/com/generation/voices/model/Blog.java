@@ -24,17 +24,10 @@ import com.generation.voices.model.enumerations.Visibility;
 import lombok.Data;
 import lombok.ToString;
 
-// scadenza 6 marzo ore 13
-// una pagina web con un BLOG DI PROVA
-// inserito a mano dall'admin
-// con dati di prova
-// ma che dia un'idea di come funzionerà il tutto
-// solo lettura: API GET /api/voices/blogs/1
-// voices/blogs/la_strada_e_i_canti (percorso verso il componente BlogPage di Angular)
-
 @Entity
 @Data
-public class Blog {
+public class Blog
+{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -84,7 +77,7 @@ public class Blog {
     List<BlogPost> posts = new ArrayList<BlogPost>();
 
 
-    // Metodo richiesto dal prof: organizza i post del blog per anno e mese.
+    // Metodo scritto dal prof: organizza i post del blog per anno e mese.
     // Serve per la vista "archivio" laterale (tipo sidebar con "Marzo 2024 (3 post)").
     // Restituisce una Map<anno, PostsByYear> dove ogni PostsByYear contiene 12 PostsByMonth.
     public Map<Integer, PostsByYear> getPostsByYearAndMonth()
@@ -94,6 +87,9 @@ public class Blog {
         int minYear = 4500;
         int maxYear = 0;
 
+        // Scorro tutti i post per trovare l'anno più vecchio e quello più recente.
+        // Uso due if separati e non un else: ogni post aggiorna entrambe le variabili
+        // se necessario (con un solo post, quell'anno è sia min che max).
         for(BlogPost p:posts)
         {
             if(p.getPublishedOn().getYear()<minYear)

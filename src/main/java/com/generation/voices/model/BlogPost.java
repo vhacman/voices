@@ -17,14 +17,13 @@ import lombok.Data;
 
 @Entity
 @Data
-public class BlogPost {
+public class BlogPost
+{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-
-    // 1 cosa fatta: ore 12.50
     // Aggiunto @ManyToOne e @JoinColumn per creare la foreign key blog_id verso la tabella Blog
     @NotNull(message = "Blog is required")
     @ManyToOne

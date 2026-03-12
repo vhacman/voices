@@ -3,12 +3,11 @@ package com.generation.voices.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PostsByMonth {
-
+public class PostsByMonth
+{
     int month;
     int year;
     List<BlogPost> posts = new ArrayList<BlogPost>();
-
 
     public PostsByMonth(int month, int year)
     {
@@ -24,7 +23,5 @@ public class PostsByMonth {
             res+=post+"\n";
         return res;
     }
-
-
 
 }
