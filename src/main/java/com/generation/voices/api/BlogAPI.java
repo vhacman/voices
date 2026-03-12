@@ -1,7 +1,9 @@
 // Creato il 06/03/2026
 package com.generation.voices.api;
 
+import java.util.Map;
 import com.generation.voices.dto.BlogDTO;
+import com.generation.voices.model.PostsByYear;
 import com.generation.voices.service.BlogService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
@@ -63,6 +65,18 @@ public class BlogAPI {
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         service.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // Archivio del blog: post raggruppati per anno → mese
+    // GET /voices/api/blogs/{id}/archive
+    @GetMapping("/{id}/archive")
+    public ResponseEntity<Object> getArchive(@PathVariable Integer id) {
+        try {
+            Map<Integer, PostsByYear> archive = service.getPostsByYearAndMonth(id);
+            return ResponseEntity.ok(archive);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
     }
 
 }

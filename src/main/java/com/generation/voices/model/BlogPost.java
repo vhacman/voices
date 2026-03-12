@@ -40,6 +40,11 @@ public class BlogPost {
 
     private String tags;
 
+    // Aggiunto viewCount per tracciare quante volte un post è stato aperto.
+    // Parte da 0: ogni chiamata a POST /{id}/view lo incrementa di 1 lato server.
+    // Non lo metto @NotNull perché il default 0 va benissimo alla creazione.
+    private int viewCount = 0;
+
     @NotEmpty(message = "Title is required")
     private String title;
 
@@ -49,5 +54,22 @@ public class BlogPost {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    
+    // Ho dovuto scrivere toString() a mano invece di affidarmi a @Data di Lombok.
+    // Il problema: BlogPost ha un campo "blog" (Blog) e Blog ha una lista "posts" (List<BlogPost>).
+    // Se Lombok genera entrambi i toString(), ognuno chiama l'altro → StackOverflowError.
+    // Scrivendo questo toString() manualmente controllo esattamente cosa viene stampato
+    // e interrompo la catena ricorsiva. blog è incluso perché mi serve vedere a quale blog appartiene.
+    @Override
+    public String toString() {
+        return "BlogPost{" +
+                "id=" + id +
+                ", blog=" + blog +
+                ", publishedOn=" + publishedOn +
+                ", status=" + status +
+                ", tags='" + tags + '\'' +
+                ", viewCount=" + viewCount +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                '}';
+    }
 }

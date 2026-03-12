@@ -1,8 +1,9 @@
 // Creato il 06/03/2026
 package com.generation.voices.dto;
 
-import com.generation.voices.model.enumerations.BlogType;
 import com.generation.voices.model.enumerations.Palette;
+import com.generation.voices.model.enumerations.Template;
+import com.generation.voices.model.enumerations.Visibility;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -28,8 +29,11 @@ public class BlogDTO {
     @NotNull(message = "Author id is required")
     private int authorId;
 
-    @NotNull(message = "Blog type is required")
-    private BlogType type;
+    @NotNull(message = "Template is required")
+    private Template template;
+
+    @NotNull(message = "Visibility is required")
+    private Visibility visibility;
 
     @NotNull(message = "Palette is required")
     private Palette palette;

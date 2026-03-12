@@ -71,4 +71,14 @@ public class BlogPostAPI {
         return ResponseEntity.noContent().build();
     }
 
+    // Incrementa il contatore di visualizzazioni — chiamato dal frontend al caricamento del post
+    @PostMapping("/{id}/view")
+    public ResponseEntity<Object> incrementViewCount(@PathVariable Integer id) {
+        try {
+            return ResponseEntity.ok(service.incrementViewCount(id));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
+    }
+
 }

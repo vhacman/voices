@@ -57,4 +57,13 @@ public class BlogPostService {
         blogPostRepository.deleteById(id);
     }
 
+    // Incrementa il contatore di visualizzazioni di 1 e restituisce il post aggiornato
+    public BlogPostDTO incrementViewCount(Integer id) {
+        BlogPost blogPost = blogPostRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("BlogPost not found with id: " + id));
+        blogPost.setViewCount(blogPost.getViewCount() + 1);
+        blogPost = blogPostRepository.save(blogPost);
+        return blogPostMapper.toDTO(blogPost);
+    }
+
 }
