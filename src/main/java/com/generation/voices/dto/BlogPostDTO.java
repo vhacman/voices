@@ -24,6 +24,8 @@ public class BlogPostDTO {
 
     private String tags;
 
+    private int viewCount;
+
     @NotEmpty(message = "Title is required")
     private String title;
 
